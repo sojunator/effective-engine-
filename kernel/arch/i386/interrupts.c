@@ -1,5 +1,4 @@
-#include <kernel/interrupts.h> 
-#include <string.h>
+#include <kernel/interrupts.h>  
  
 
 void install_idt() {
@@ -7,6 +6,9 @@ void install_idt() {
     idtptr.limit = sizeof(struct idt_entry) * 256 - 1;
 
     memset(idt, 0, sizeof(struct idt_entry) * 256);
+
+    // run asm
+    idt_load();
 } 
 
 void idt_set_gate(unsigned num, unsigned long base, unsigned short sel, unsigned char flags) {

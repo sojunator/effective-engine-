@@ -18,7 +18,7 @@ struct idt_ptr {
 struct idt_entry idt[256];
 struct idt_ptr idtptr;
 
-void idt_install();
+void install_idt();
 void idt_set_gate(unsigned num, unsigned long base, unsigned short sel, unsigned char flags);
 
 // Assembly that loads the idt pointer
