@@ -8,4 +8,8 @@ void kernel_main(void) {
 	printf("Loading GDT\n"); 
 	install_idt();
 	printf("Loading IDT\n");
+
+	int test = 0;
+
+	printf("Test interrupts: %d", 123 / test);
 }
