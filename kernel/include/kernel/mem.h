@@ -3,6 +3,7 @@
 
 
 #include <stdint.h>
+#include <stddef.h>
 
 struct gdt_ptr {
     uint16_t size;
@@ -23,7 +24,8 @@ struct gdt_entry gdt[3];
 struct gdt_ptr gdtptr;
 
 void gdt_set_gate(int32_t slot, unsigned long base, unsigned long limit, unsigned char access, unsigned char granularity);
-void gdt_install();
+void gdt_install(); 
+
 extern void gdt_flush();
 
 #endif

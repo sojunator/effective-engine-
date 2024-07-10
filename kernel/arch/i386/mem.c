@@ -1,4 +1,4 @@
-#include <kernel/mem.h>
+#include <kernel/mem.h>  
 
 void gdt_set_gate(int32_t slot, unsigned long base, unsigned long limit, unsigned char access, unsigned char granularity) {
     // Lower 16 bits - 0xFFFF
@@ -32,6 +32,6 @@ void gdt_install() {
     gdt_set_gate(2, 0, 0xFFFFFFFF, 0x92, 0xCF);
 
     // assembly that performs LGDT and loads SS, CS, DS
-    gdt_flush();
+    gdt_flush(); 
 }
 

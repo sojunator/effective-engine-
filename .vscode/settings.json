@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "mem.h": "c",
+        "tty.h": "c",
+        "stdint.h": "c",
+        "stddef.h": "c",
+        "string.h": "c",
+        "interrupts.h": "c"
+    }
+}

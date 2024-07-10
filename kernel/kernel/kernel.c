@@ -7,7 +7,7 @@ void kernel_main(void) {
 
 	
 	gdt_install();
-	printf("Loading GDT\n");
+	printf("Loading GDT\n"); 
 	printf("Testing numbers %d is this thing on \n", 40);
 	printf("Testing numbers 0x%x is this thing on", 40);
 }
