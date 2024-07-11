@@ -8,8 +8,7 @@
     /* Display the description for the Exception that occurred.
     *  In this tutorial, we will simply halt the system using an
     *  infinite loop */ 
-    printf("Interrupt: %d, Error Code: %d\n", r->int_no, r->err_code);    for (;;);
-
+    printf("Interrupt: %d, Error Code: %d\n", r->int_no, r->err_code); 
  }
 
  void irq_handler(struct isr_args * r) {
@@ -54,23 +53,9 @@
 
 /* This will keep track of how many ticks that the system
 *  has been running for */
-
-
-/* Handles the timer. In this case, it's very simple: We
-*  increment the 'timer_ticks' variable every time the
-*  timer fires. By default, the timer fires 18.222 times
-*  per second. Why 18.222Hz? Some engineer at IBM must've
-*  been smoking something funky */
 void timer_handler(struct isr_args *r){
     /* Increment our 'tick count' */
     timer_ticks++;
-
-    /* Every 18 clocks (approximately 1 second), we will
-    *  display a message on the screen */
-    if (timer_ticks % 100 == 0)
-    { 
-        printf("Around 1 second has passed\n");
-    }
 }
 
 
