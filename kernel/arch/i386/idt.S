@@ -3,5 +3,6 @@
 
 idt_load:
     lidt idtptr
+    sti
     ret
 		
