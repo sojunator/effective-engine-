@@ -13,7 +13,6 @@
  }
 
  void irq_handler(struct isr_args * r) {
-    printf("IRQ: %d, Error Code: %d\n", r->int_no, r->err_code);    
 
     /* If the IDT entry that was invoked was greater than 40
     *  (meaning IRQ8 - 15), then we need to send an EOI to
@@ -23,8 +22,10 @@
         outportb(0xA0, 0x20);
     }
 
-    if (r->int_no == 0) {
+    if (r->int_no == 32) {
         timer_handler(r);
+    } else {
+        printf("IRQ: %d, Error Code: %d\n", r->int_no, r->err_code);    
     }
 
     /* In either case, we need to send an EOI to the master
@@ -66,9 +67,9 @@ void timer_handler(struct isr_args *r){
 
     /* Every 18 clocks (approximately 1 second), we will
     *  display a message on the screen */
-    if (timer_ticks % 18 == 0)
+    if (timer_ticks % 100 == 0)
     { 
-        printf("Around 1 second has passed");
+        printf("Around 1 second has passed\n");
     }
 }
 

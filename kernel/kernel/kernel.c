@@ -12,6 +12,6 @@ void kernel_main(void) {
 	install_irq();
 	printf("IDT loading IRQ mappings\n");
 	timer_phase(100);
-	printf("Init done"); 
+	printf("Init done\n"); 
 	for(;;);
 }
