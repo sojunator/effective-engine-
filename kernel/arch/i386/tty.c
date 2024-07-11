@@ -39,6 +39,22 @@ void terminal_putentryat(unsigned char c, uint8_t color, size_t x, size_t y) {
 	terminal_buffer[index] = vga_entry(c, color);
 }
 
+unsigned char terminal_getentryat(size_t x, size_t y) {
+	const size_t index = y * VGA_WIDTH + x;
+	return terminal_buffer[index];
+} 
+
+void terminal_moverowsup() {
+    // This should move all lines, one by one, upwards
+    for (size_t y = 1; y < VGA_HEIGHT; y++) {
+        for (size_t x = 0; x < VGA_WIDTH; x++) {
+            size_t lowerRow = (y * VGA_WIDTH) + x;
+            size_t upperRow = (y - 1) * VGA_WIDTH + x;
+            terminal_buffer[upperRow] = terminal_buffer[lowerRow];
+        }
+    } 
+}
+
 void terminal_putchar(char c) {
 	unsigned char uc = c;
 
@@ -47,7 +63,8 @@ void terminal_putchar(char c) {
 		terminal_column = 0;
 	} else {
 		if (terminal_row == VGA_HEIGHT)  {
-			terminal_row = 0;
+			terminal_moverowsup();
+			--terminal_row;
 		}
 
 		terminal_putentryat(uc, terminal_color, terminal_column, terminal_row);
