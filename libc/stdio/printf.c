@@ -32,11 +32,12 @@ uint8_t writeNumberIntoAsciiBuffer(uint32_t number, char * buffer, uint8_t base)
 
 		// 55 is 10 away from A, so if val is 10, we get A
 		// If value is greater than 10, after modulu base, we have a number that is represented 
-		// With chars aswell, so A becomes a base
-		buffer[i++] = (val < 10 ? '0' : 'A') + val;
+		// With chars aswell, so A becomes a base 
+		buffer[i++] = (val < 10 ? 48 : 55) + val;
 		number /= base;
 	}
- 
+  
+
 	for (uint32_t j = 0; j < i / 2; j++) {
 		// -1 is due to us not wanting the null byte
 		// Reverse order of number
