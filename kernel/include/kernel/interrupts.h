@@ -26,7 +26,9 @@ struct isr_args {
 
 struct idt_entry idt[256];
 struct idt_ptr idtptr;
-
+int timer_ticks = 0;
+void timer_phase(int hz);
+void timer_handler(struct isr_args *r);
 void install_idt();
 void idt_set_gate(unsigned num, unsigned long base, unsigned short sel, unsigned char flags);
 void fault_handler(struct isr_args * r);
@@ -65,5 +67,21 @@ extern void _isr29();
 extern void _isr30();
 extern void _isr31();
 
+extern void _irq0();
+extern void _irq1();
+extern void _irq2();
+extern void _irq3();
+extern void _irq4();
+extern void _irq5();
+extern void _irq6();
+extern void _irq7();
+extern void _irq8();
+extern void _irq9();
+extern void _irq10();
+extern void _irq11();
+extern void _irq12();
+extern void _irq13();
+extern void _irq14();
+extern void _irq15();
 
 #endif

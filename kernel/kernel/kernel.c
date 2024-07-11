@@ -6,10 +6,11 @@ void kernel_main(void) {
 	printf("Hello, kernel World!\n");
 	gdt_install();
 	printf("Loading GDT\n"); 
-	install_idt();
+	
 	printf("Loading IDT\n");
-
-	int test = 0;
-
-	printf("Test interrupts: %d", 123 / test);
+	install_idt();
+	install_irq();
+	printf("IDT loading IRQ mappings\n");
+	timer_phase(100);
+	printf("Init done"); 
 }

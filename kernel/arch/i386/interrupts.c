@@ -1,4 +1,5 @@
 #include <kernel/interrupts.h>  
+#include <kernel/io.h>
 #include <stdio.h>
 
  void fault_handler(struct isr_args * r) {
@@ -8,7 +9,102 @@
     *  In this tutorial, we will simply halt the system using an
     *  infinite loop */ 
     printf("Interrupt: %d, Error Code: %d\n", r->int_no, r->err_code);    for (;;);
- 
+
+ }
+
+ void irq_handler(struct isr_args * r) {
+    printf("IRQ: %d, Error Code: %d\n", r->int_no, r->err_code);    
+
+    /* If the IDT entry that was invoked was greater than 40
+    *  (meaning IRQ8 - 15), then we need to send an EOI to
+    *  the slave controller */
+    if (r->int_no >= 40)
+    {
+        outportb(0xA0, 0x20);
+    }
+
+    if (r->int_no == 0) {
+        timer_handler(r);
+    }
+
+    /* In either case, we need to send an EOI to the master
+    *  interrupt controller too */
+    outportb(0x20, 0x20);
+ }
+
+ void timer_phase(int hz) {
+    int divisor = 1193180 / hz;
+    // Three channels, 
+    // 0x40 is channel 0 - IRQ0 
+    // 0x41 is channel 1 - system
+    // 0x42 is channel 2 - Beep
+    //           7654 3210
+    // 0x36 = 0b 0011 0110
+    // 7-6 bits - CNTR = channel 0
+    // 5-4 Bit RW mode = RW
+    // 3-1 Is mode = 011 = 3 Square Wave mode
+    // BCD = 0 = 16 bit, 1 = 4x BCD
+
+    outportb(0x43, 0x36);
+    outportb(0x40, divisor & 0xFF); // Low bit
+    outportb(0x40, divisor >> 8); // High bit
+ }
+
+
+/* This will keep track of how many ticks that the system
+*  has been running for */
+
+
+/* Handles the timer. In this case, it's very simple: We
+*  increment the 'timer_ticks' variable every time the
+*  timer fires. By default, the timer fires 18.222 times
+*  per second. Why 18.222Hz? Some engineer at IBM must've
+*  been smoking something funky */
+void timer_handler(struct isr_args *r){
+    /* Increment our 'tick count' */
+    timer_ticks++;
+
+    /* Every 18 clocks (approximately 1 second), we will
+    *  display a message on the screen */
+    if (timer_ticks % 18 == 0)
+    { 
+        printf("Around 1 second has passed");
+    }
+}
+
+
+void irq_remap() {
+    outportb(0x20, 0x11);
+    outportb(0xA0, 0x11);
+    outportb(0x21, 0x20);
+    outportb(0xA1, 0x28);
+    outportb(0x21, 0x04);
+    outportb(0xA1, 0x02);
+    outportb(0x21, 0x01);
+    outportb(0xA1, 0x01);
+    outportb(0x21, 0x0);
+    outportb(0xA1, 0x0);
+}
+
+ void install_irq() {
+    idt_set_gate(32, (unsigned)_irq0, 0x08, 0x8E);
+    idt_set_gate(33, (unsigned)_irq1, 0x08, 0x8E);
+    idt_set_gate(34, (unsigned)_irq2, 0x08, 0x8E); 
+    idt_set_gate(35, (unsigned)_irq3, 0x08, 0x8E);
+    idt_set_gate(36, (unsigned)_irq4, 0x08, 0x8E);
+    idt_set_gate(37, (unsigned)_irq5, 0x08, 0x8E);
+    idt_set_gate(38, (unsigned)_irq6, 0x08, 0x8E);
+    idt_set_gate(39, (unsigned)_irq7, 0x08, 0x8E);
+    idt_set_gate(40, (unsigned)_irq8, 0x08, 0x8E);
+    idt_set_gate(41, (unsigned)_irq9, 0x08, 0x8E);
+    idt_set_gate(42, (unsigned)_irq10, 0x08, 0x8E);
+    idt_set_gate(43, (unsigned)_irq11, 0x08, 0x8E);
+    idt_set_gate(44, (unsigned)_irq12, 0x08, 0x8E);
+    idt_set_gate(45, (unsigned)_irq13, 0x08, 0x8E);
+    idt_set_gate(46, (unsigned)_irq14, 0x08, 0x8E);
+    idt_set_gate(47, (unsigned)_irq15, 0x08, 0x8E);
+
+    irq_remap();
  }
 
 void install_idt() {
@@ -49,7 +145,7 @@ void install_idt() {
     idt_set_gate(29, (unsigned)_isr29, 0x08, 0x8E);
     idt_set_gate(30, (unsigned)_isr30, 0x08, 0x8E);
     idt_set_gate(31, (unsigned)_isr31, 0x08, 0x8E);
-    // run asm
+  
     idt_load();
 } 
 
