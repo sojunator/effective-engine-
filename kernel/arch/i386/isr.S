@@ -49,7 +49,7 @@ isr_common_stub:
     mov %ax, %fs         # Update FS segment register
     mov %ax, %gs         # Update GS segment register
 
-    movl %esp, %eax   // Push us the stack
+    movl %esp, %eax   // Push us the stack, so that we get an addr to where args start
 	push %eax    
     # Call the fault handler
     call fault_handler   # Call the fault handler (EIP is preserved)
