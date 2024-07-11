@@ -1,6 +1,7 @@
 #include <kernel/interrupts.h>  
 #include <kernel/io.h>
 #include <stdio.h>
+#include <kernel/kb.h>
 
  void fault_handler(struct isr_args * r) {
     /* Is this a fault whose number is from 0 to 31? */
@@ -23,6 +24,8 @@
 
     if (r->int_no == 32) {
         timer_handler(r);
+    } else if (r->int_no == 33) {
+        keyboard_handler(r);
     } else {
         printf("IRQ: %d, Error Code: %d\n", r->int_no, r->err_code);    
     }
@@ -58,6 +61,21 @@ void timer_handler(struct isr_args *r){
     timer_ticks++;
 }
 
+
+void keyboard_handler(struct isr_args * r) {
+    unsigned char scancode;
+
+    scancode = inportb(0x60);
+    // 0x80 - 0b10000000
+    // topbit means that it was just released
+    if (scancode & 0x80) {
+
+    } else {
+        // It was pressed
+        char input = kbdus[scancode];
+        printf("Keyboard hit: %c \n", input);
+    }
+}
 
 void irq_remap() {
     outportb(0x20, 0x11);
