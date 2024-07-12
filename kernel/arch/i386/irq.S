@@ -33,7 +33,6 @@ irq_common_stub:
 
     movl %esp, %eax   // Push us the stack, so that we get an addr to where args start
 	push %eax    
-    # Call the fault handler
     call irq_handler   # Call the fault handler (EIP is preserved)
 
 

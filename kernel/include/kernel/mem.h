@@ -22,9 +22,11 @@ struct gdt_entry {
 
 struct gdt_entry gdt[3];
 struct gdt_ptr gdtptr;
+uint32_t * page_dir = NULL;
 
 void gdt_set_gate(int32_t slot, unsigned long base, unsigned long limit, unsigned char access, unsigned char granularity);
 void gdt_install(); 
+void setup_paging();
 
 extern void gdt_flush();
 

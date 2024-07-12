@@ -6,6 +6,8 @@
         "stddef.h": "c",
         "string.h": "c",
         "interrupts.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "__locale": "c",
+        "registers.h": "c"
     }
 }

@@ -3,13 +3,15 @@
 #include <stdio.h>
 #include <kernel/kb.h>
 
- void fault_handler(struct isr_args * r) {
+void fault_handler(struct isr_args * r) {
     /* Is this a fault whose number is from 0 to 31? */
 
     /* Display the description for the Exception that occurred.
     *  In this tutorial, we will simply halt the system using an
     *  infinite loop */ 
     printf("Interrupt: %d, Error Code: %d\n", r->int_no, r->err_code); 
+
+    for (;;);
  }
 
  void irq_handler(struct isr_args * r) {
@@ -58,7 +60,7 @@
 *  has been running for */
 void timer_handler(struct isr_args *r){
     /* Increment our 'tick count' */
-    timer_ticks++;
+    timer_ticks++; 
 }
 
 

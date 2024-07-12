@@ -1,7 +1,7 @@
 #include <kernel/io.h>  
 
 /*
-            Master PIC Slave PIC
+    Master PIC Slave PIC
     Ports:      0x20    0xA0
 */
 
