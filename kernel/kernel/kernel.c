@@ -3,12 +3,14 @@
 /*
 	Linker.ld
 	Kernel starts at 0x100000 = 1024 * 1024
-	.text is 4K aligned and depends on the instructions
+	All segments in Linker.ld is 4K aligned and 4K in size
+	.text
+	.rodata
+	.data
 	.bss is 16KiB = 0x4000, and is 4K aligned, and it comes after 
-	.text in Linker.ld
-
+	
 	So stack starts 3 aligned in, = 0x103000
-	0x102000 + 0x4000 = 0x107000
+	0x102000 + 0x4000 = 0x106000
 	So kernel starts 0x100000 and ends  at 0x107000 - ish
 */
 
