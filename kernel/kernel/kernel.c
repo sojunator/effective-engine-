@@ -9,7 +9,7 @@
 
 	So stack starts 3 aligned in, = 0x103000
 	0x102000 + 0x4000 = 0x107000
-	So kernel starts 0x100000 and ends  at 0x107000
+	So kernel starts 0x100000 and ends  at 0x107000 - ish
 */
 
 
@@ -25,8 +25,6 @@ void kernel_main(void) {
 	printf("IDT loading IRQ mappings\n");
 	timer_phase(100); 
 	printf("Lets setup paging!\n");
-	setup_paging();
-
-	printf("Pagin enbled \n");
+	setup_paging(); 
 	for(;;);
 }
