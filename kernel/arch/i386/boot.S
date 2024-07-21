@@ -26,8 +26,9 @@ stack_top:
 _start:
 	movl $stack_top, %esp
 
-	# Call the global constructors.
-	call _init
+	# Push memory map for kernel main
+	pushl %ebx // multiboot header 
+ 	pushl %eax // magic number
 
 	# Transfer control to the main kernel.
 	call kernel_main

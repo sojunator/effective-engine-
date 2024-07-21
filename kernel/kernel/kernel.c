@@ -1,5 +1,8 @@
-#include <stdio.h>
- 
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h> 
+
+#include <kernel/multiboot.h>
 /*
 	Linker.ld
 	Kernel starts at 0x100000 = 1024 * 1024
@@ -15,9 +18,14 @@
 */
 
 
-void kernel_main(void) {
+void kernel_main(unsigned long magic, multiboot_info_t *mbi) {
+	if(magic != 0x2BADB002) { // Invalid multiboot
+		return;
+	}
+
 	terminal_initialize();
 	printf("Hello, kernel World!\n");
+
 	gdt_install();
 	printf("Loading GDT\n"); 
 	
@@ -26,7 +34,9 @@ void kernel_main(void) {
 	install_irq();
 	printf("IDT loading IRQ mappings\n");
 	timer_phase(100); 
-	printf("Lets setup paging!\n");
-	setup_paging(); 
+	printf("Lets setup paging!\n");  
+	get_frames(mbi);
+	setup_paging();   
+	get_frames(mbi);
 	for(;;);
 }

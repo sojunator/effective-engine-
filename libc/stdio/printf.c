@@ -126,6 +126,21 @@ int printf(const char* restrict format, ...) {
 			}
 			written++;
 
+		} else if (*format == 'u') {
+			format++;
+			int number = va_arg(parameters, uint32_t);
+			int length = writeNumberIntoAsciiBuffer(number, buffer, 10);
+
+
+			if (!maxrem) {
+				return -1;
+			}
+			if (!print(buffer, sizeof(char) * length)) {
+				return -1;
+			}
+			written++;
+ 
+
 		} else if (*format == 'x') {
 			format++;
 			int number = va_arg(parameters, int);

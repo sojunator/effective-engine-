@@ -1,6 +1,7 @@
 #include <kernel/mem.h>  
 #include <kernel/registers.h>
 
+
 void gdt_set_gate(int32_t slot, unsigned long base, unsigned long limit, unsigned char access, unsigned char granularity) {
     // Lower 16 bits - 0xFFFF
     gdt[slot].base_low = (base & 0xFFFF);
@@ -36,6 +37,16 @@ void gdt_install() {
     gdt_flush(); 
 }
 
+void get_frames(multiboot_info_t* mbd) {
+    if (!mbd->flags & MULTIBOOT_INFO_MEM_MAP || !mbd->flags & MULTIBOOT_INFO_MEMORY)
+        return;
+
+    printf("mem_lower = 0x%x  mem_upper = 0x%x \n",
+            (unsigned int) mbd->mem_lower, (unsigned int) mbd->mem_upper);
+ 
+
+}
+
 void setup_paging() {
     // Page dir should contain 1024 4 KiB pages, 4GiB
     // 0x1000 = 4KiB
@@ -57,7 +68,12 @@ void setup_paging() {
 
    // Current linker script starts with loading kernel to 0x00100000 
    // Which means that 0x0 is free
-   page_dir = (uint32_t*)0x0;
+   page_dir = (uint32_t*)0x10A000;
+
+    // Lets clear all bytes for our tables, just in case
+    for (uint32_t i = 0; i < 1024 * 16 * 1024; i++) {
+        page_dir[i] = 0;
+    }
 
     setCR3(page_dir);
     // Setup dir
@@ -68,28 +84,47 @@ void setup_paging() {
 
     // Give the dir 16 tables, all 4096 aligned
     for (uint32_t i = 0; i < 16; i++) {
-        // Kernel starts at 0x100000, we have to stop before creating choas
-        // Setup 0x0000 -   0x400000, which is 4194304
-        // meaning we can cram in all the tables before the kernel, yay
-        // but when we do, stuff becomes strange as we venture into VGA buffer. 
-        // Between 0x0 and 0x100000 is 0xB8000, which will get wrecked.
-        
-
+        // Kernel starts at 0x100000 and ends at 0x107000, we have to stop before creating choas
         // Each table takes 1024 entries 
-         // 16 tables is equal to 1024 * 16 * 4096 = 0x3E80000, so 65 MiB
-        page_dir[i] = (0x1000 * i) + 0x3;
+        // 16 tables is equal to 1024 * 16 * 4096 = 0x3E80000, so 65 MiB
+        page_dir[i] = 0x10A000 + (0x1000 * (i + 1)) + 0x3;
     }
 
     // Setup table contents - go over all addresses
     for (uint32_t addr = 0; addr < 0x3E80000; addr += 0x1000) {
+        // Get 10 most significant bits
         uint32_t pdIndex = (addr >> 22);
-        uint32_t ptIndex = (addr >> 12) & 0x03FF;
+        // Keep only the 12 middle bits, but remove the most significant two bits
+        uint32_t ptIndex = (addr >> 12) & 0x3FF;
 
+        // get the address for the table, but remove the 12 least significant bits
         uint32_t* table =  (uint32_t *)(page_dir[pdIndex] & 0xFFFFF000);
-
-        table[ptIndex] = addr + 0x3;
+        uint32_t physical_page = addr + 0x3;
+        table[ptIndex] = physical_page;
+ 
+ 
     }
-     
+    dump_table(0, 10);
     enablePaging();
 }
 
+void dump_table(uint32_t tableIndex, size_t lastIndex) {
+    // If we keep all bits we run into trouble
+    uint32_t* page_table =  (uint32_t *)(page_dir[tableIndex] & 0xFFFF000); 
+  
+
+    for (uint32_t i = 0; i < lastIndex && i < 1024; i++ ) {    
+        printf("Value on pos %d in page table: 0x%x\n", i, page_table[i]);
+    }
+
+}
+
+void print_mapping(uint32_t addr) { 
+    // Lets go backwards, lowest bits for offset is not relevant
+    uint32_t page_dir_index = addr >> 22;
+
+    uint32_t * page_table = (uint32_t *) page_dir[page_dir_index];
+    uint32_t page_table_index = (addr >> 12) & 0x3FF;
+    printf("Page table addr: 0x%x \n", page_table);
+    printf("Value on pos %d in page table: 0x%x\n", page_table_index, page_table[page_table_index]);
+}

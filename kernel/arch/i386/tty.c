@@ -53,6 +53,14 @@ void terminal_moverowsup() {
             terminal_buffer[upperRow] = terminal_buffer[lowerRow];
         }
     } 
+
+	// Remove everything from the last line that we moved from.
+	for (size_t x = 0; x < VGA_WIDTH; x++) {
+		size_t index = (VGA_HEIGHT - 1)  * VGA_WIDTH + x;
+		terminal_buffer[index] = ' ';
+	}
+	
+	
 }
 
 void terminal_putchar(char c) {

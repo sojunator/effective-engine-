@@ -1,6 +1,8 @@
 #ifndef _MEM_H
 #define _MEM_H
 
+#include <kernel/multiboot.h>
+
 
 #include <stdint.h>
 #include <stddef.h>
@@ -22,11 +24,12 @@ struct gdt_entry {
 
 struct gdt_entry gdt[3];
 struct gdt_ptr gdtptr;
-uint32_t * page_dir = NULL;
+uint32_t * page_dir = 0x107000;
 
 void gdt_set_gate(int32_t slot, unsigned long base, unsigned long limit, unsigned char access, unsigned char granularity);
 void gdt_install(); 
 void setup_paging();
+void get_frames(multiboot_info_t* mbd);
 
 extern void gdt_flush();
 

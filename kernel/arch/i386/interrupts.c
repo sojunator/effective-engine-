@@ -1,7 +1,10 @@
 #include <kernel/interrupts.h>  
-#include <kernel/io.h>
-#include <stdio.h>
+#include <kernel/io.h> 
 #include <kernel/kb.h>
+#include <kernel/tty.h>
+
+#include <stdio.h>
+
 
 void fault_handler(struct isr_args * r) {
     /* Is this a fault whose number is from 0 to 31? */
@@ -19,8 +22,7 @@ void fault_handler(struct isr_args * r) {
     /* If the IDT entry that was invoked was greater than 40
     *  (meaning IRQ8 - 15), then we need to send an EOI to
     *  the slave controller */
-    if (r->int_no >= 40)
-    {
+    if (r->int_no >= 40) {
         outportb(0xA0, 0x20);
     }
 
@@ -74,8 +76,8 @@ void keyboard_handler(struct isr_args * r) {
 
     } else {
         // It was pressed
-        char input = kbdus[scancode];
-        printf("Keyboard hit: %c \n", input);
+        char input = kbdus[scancode]; 
+        
     }
 }
 

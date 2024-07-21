@@ -8,6 +8,9 @@
         "interrupts.h": "c",
         "stdio.h": "c",
         "__locale": "c",
-        "registers.h": "c"
+        "registers.h": "c",
+        "multiboot.h": "c",
+        "__verbose_abort": "c",
+        "cstdio": "c"
     }
 }

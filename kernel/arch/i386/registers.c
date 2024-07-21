@@ -26,7 +26,13 @@ void setCR3(uint32_t* page_dir)
 
 void enablePaging()
 {
- __asm__ __volatile__("movl %%cr0, %%eax       \n\
-                       orl $0x80000001, %%eax   \n\
-                       movl %%eax, %%cr0" : : : "%eax");
+ __asm__ __volatile__(" movl %%cr0, %%eax       \n\
+                        orl $0x80000001, %%eax   \n\
+                        movl %%eax, %%cr0" : : : "%eax");
+} 
+
+void disablePaging() {
+    __asm__ __volatile__(" movl %%cr0, %%eax        \n\
+                        andl $0x7FFFFFFF, %%eax  \n\
+                        movl %%eax, %%cr0" : : : "%eax");
 }
