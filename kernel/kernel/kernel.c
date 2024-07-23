@@ -34,9 +34,10 @@ void kernel_main(unsigned long magic, multiboot_info_t *mbi) {
 	install_irq();
 	printf("IDT loading IRQ mappings\n");
 	timer_phase(100); 
-	printf("Lets setup paging!\n");  
-	get_frames(mbi);
+	printf("Paging setup!\n");   
 	setup_paging();   
+	printf("Reading memory map\n");   
+
 	get_frames(mbi);
 	for(;;);
 }

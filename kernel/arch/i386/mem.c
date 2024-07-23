@@ -38,12 +38,21 @@ void gdt_install() {
 }
 
 void get_frames(multiboot_info_t* mbd) {
+    // Can we access mem lower & the memory map?
     if (!mbd->flags & MULTIBOOT_INFO_MEM_MAP || !mbd->flags & MULTIBOOT_INFO_MEMORY)
         return;
 
     printf("mem_lower = 0x%x  mem_upper = 0x%x \n",
             (unsigned int) mbd->mem_lower, (unsigned int) mbd->mem_upper);
- 
+  
+    
+    for (size_t i = 0; i < mbd->mmap_length; i += sizeof(multiboot_memory_map_t)) {
+        // at mbd->mmap_addr, we have a multiboot_memory_map_t
+        multiboot_memory_map_t * map = (uint32_t*) (mbd->mmap_addr + i);
+    
+        printf("Start addr: 0x%x - Size 0x%x - len 0x%x - type 0x%x \n", map->addr, map->size, map->len, map->type);
+    }
+    
 
 }
 
@@ -103,8 +112,7 @@ void setup_paging() {
         table[ptIndex] = physical_page;
  
  
-    }
-    dump_table(0, 10);
+    } 
     enablePaging();
 }
 
